@@ -1,0 +1,89 @@
+/*
+ * Tailwind CSS v4 entry point. Tailwind v4 is configured in CSS, so this single file is
+ * required; it holds design tokens only. All styling lives in Tailwind classes.
+ */
+@import "tailwindcss";
+
+/* Reference material is never part of the site — keep its markup out of class scanning. */
+@source not "../ref";
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* ATLAS indigo — #342B7C sampled from the official logo */
+  --color-atlas-50: #f3f2fa;
+  --color-atlas-100: #e6e4f4;
+  --color-atlas-200: #cbc7e8;
+  --color-atlas-300: #a7a0d6;
+  --color-atlas-400: #7d74bd;
+  --color-atlas-500: #5a50a3;
+  --color-atlas-600: #43398e;
+  --color-atlas-700: #342b7c;
+  --color-atlas-800: #2a2266;
+  --color-atlas-900: #1f1a4d;
+  --color-atlas-950: #120e30;
+
+  /* ATLAS teal — #00A8B8 sampled from the official logo */
+  --color-aqua-50: #e8f9fb;
+  --color-aqua-100: #c6eff3;
+  --color-aqua-200: #8fdfe7;
+  --color-aqua-300: #4fcbd7;
+  --color-aqua-400: #1db6c5;
+  --color-aqua-500: #00a8b8;
+  --color-aqua-600: #008a98;
+  --color-aqua-700: #006d78;
+  --color-aqua-800: #055a63;
+
+  --color-lavender: #b5bbd3;
+  --color-paper: #f6f5f1;
+  --color-ink: #16132e;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-lift: lift 0.9s var(--ease-out-expo) both;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  /* Transform-only entrance for the LCP headline: it is painted on the first frame. */
+  @keyframes lift {
+    from { transform: translateY(0.35em); }
+    to { transform: none; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 5.5rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.lenis) { scroll-behavior: smooth; }
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+  /* Sections receive programmatic focus after in-page navigation; no ring for that. */
+  [tabindex="-1"]:focus { outline: none; }
+  ::selection {
+    background-color: var(--color-aqua-200);
+    color: var(--color-atlas-950);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Lenis smooth-scroll requirements (https://github.com/darkroomengineering/lenis) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
