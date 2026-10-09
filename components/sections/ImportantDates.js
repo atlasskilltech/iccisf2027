@@ -38,7 +38,8 @@ export default function ImportantDates() {
             className="absolute top-3 bottom-3 left-[0.5625rem] w-px origin-top bg-gradient-to-b from-atlas-200 via-atlas-200 to-aqua-500 lg:top-[0.5625rem] lg:right-0 lg:bottom-auto lg:left-0 lg:h-px lg:w-auto lg:origin-left lg:bg-gradient-to-r"
           />
           {importantDates.map((item, i) => {
-            const confirmed = item.status !== "tba";
+            const confirmed = item.status === "confirmed" || item.status === "extended";
+            const badge = item.status !== "announced";
             const highlight = item.highlight;
             return (
               <li key={item.id} data-reveal-item className="relative pl-10 lg:pt-12 lg:pl-0">
@@ -66,22 +67,24 @@ export default function ImportantDates() {
                   <p className={`mt-4 text-base font-semibold tracking-tight lg:mt-auto lg:pt-6 ${highlight ? "text-white" : ""}`}>
                     <DateValue item={item} />
                   </p>
-                  <p
-                    className={`mt-4 inline-flex items-center gap-1.5 self-start rounded-full px-2.5 py-1 text-xs font-medium ${
-                      confirmed
-                        ? highlight
-                          ? "bg-white/12 text-aqua-100"
-                          : "bg-aqua-50 text-aqua-800"
-                        : "bg-atlas-50 text-atlas-600"
-                    }`}
-                  >
-                    {confirmed ? (
-                      <CalendarCheck2 aria-hidden="true" className="size-3.5" />
-                    ) : (
-                      <Clock aria-hidden="true" className="size-3.5" />
-                    )}
-                    {confirmed ? (item.status === "extended" ? "Extended" : "Confirmed") : "Pending"}
-                  </p>
+                  {badge && (
+                    <p
+                      className={`mt-4 inline-flex items-center gap-1.5 self-start rounded-full px-2.5 py-1 text-xs font-medium ${
+                        confirmed
+                          ? highlight
+                            ? "bg-white/12 text-aqua-100"
+                            : "bg-aqua-50 text-aqua-800"
+                          : "bg-atlas-50 text-atlas-600"
+                      }`}
+                    >
+                      {confirmed ? (
+                        <CalendarCheck2 aria-hidden="true" className="size-3.5" />
+                      ) : (
+                        <Clock aria-hidden="true" className="size-3.5" />
+                      )}
+                      {confirmed ? (item.status === "extended" ? "Extended" : "Confirmed") : "Pending"}
+                    </p>
+                  )}
                 </div>
               </li>
             );

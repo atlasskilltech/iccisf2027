@@ -97,14 +97,17 @@ export const site = {
   },
 };
 
-/** Primary navigation — Phase 1 sections only. Add items here when new sections ship. */
+/**
+ * Primary navigation. `#hash` items scroll to homepage sections; `/path` items are pages.
+ * `section` lets a page item also highlight while its homepage section is in view.
+ */
 export const navigation = [
   { label: "About", href: "#about" },
   { label: "Theme", href: "#theme" },
   { label: "Dates", href: "#dates" },
   { label: "Call for Papers", href: "#call-for-papers" },
   { label: "Tracks", href: "#tracks" },
-  { label: "Committee", href: "#committee" },
+  { label: "Committee", href: "/committee", section: "#committee" },
   { label: "Venue", href: "#venue" },
   { label: "Contact", href: "#contact" },
 ];

@@ -3,40 +3,42 @@
  *
  * status:
  *   "tba"       → shows "To Be Announced" (date must be null)
+ *   "announced" → shows `display` with no status badge; `date` may be month-only (yyyy-mm)
  *   "confirmed" → shows `display`, with `date` (and optional `endDate`) as ISO yyyy-mm-dd
  *   "extended"  → shows `display` plus the struck-through `previousDisplay`
  *
- * Source: MOU draft "Planned Dates" — every milestone is "To be finalized" as of Oct 2026.
+ * Source: MOU draft "Planned Dates" (all "To be finalized"), superseded by the organizers'
+ * October 2026 update announcing months only for the four paper milestones. Do not add days.
  */
 
 export const importantDates = [
   {
     id: "cfp",
     label: "Call for Papers",
-    status: "tba",
-    date: null,
-    display: null,
+    status: "announced",
+    date: "2027-01",
+    display: "January 2027",
   },
   {
     id: "submission",
     label: "Paper Submission",
-    status: "tba",
-    date: null,
-    display: null,
+    status: "announced",
+    date: "2027-02",
+    display: "February 2027",
   },
   {
     id: "notification",
     label: "Notification of Acceptance",
-    status: "tba",
-    date: null,
-    display: null,
+    status: "announced",
+    date: "2027-08",
+    display: "August 2027",
   },
   {
     id: "camera-ready",
     label: "Camera-Ready Paper",
-    status: "tba",
-    date: null,
-    display: null,
+    status: "announced",
+    date: "2027-09",
+    display: "September 2027",
   },
   {
     id: "conference",

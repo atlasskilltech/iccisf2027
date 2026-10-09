@@ -1,11 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { logos } from "@/data/images";
 import { navigation, site } from "@/data/site";
 
 /** Solid atlas-700 (#342B7C) — identical to the reversed logo's own background, so no gradients here. */
-export default function Footer() {
+/** `linkPrefix="/"` on pages other than the homepage so section links point back to it. */
+export default function Footer({ linkPrefix = "" }) {
   const year = new Date().getFullYear();
 
   return (
@@ -28,16 +30,20 @@ export default function Footer() {
           <nav aria-label="Footer" className="lg:col-span-3">
             <h3 className="font-mono text-[0.68rem] tracking-[0.16em] text-aqua-200 uppercase">Explore</h3>
             <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-1 lg:grid-cols-1">
-              {navigation.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="inline-flex min-h-10 items-center text-atlas-100 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+              {navigation.map((item) => {
+                const href = item.href.startsWith("#") ? `${linkPrefix}${item.href}` : item.href;
+                const Tag = href.startsWith("/") ? Link : "a";
+                return (
+                  <li key={item.href}>
+                    <Tag
+                      href={href}
+                      className="inline-flex min-h-10 items-center text-atlas-100 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      {item.label}
+                    </Tag>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 

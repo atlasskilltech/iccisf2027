@@ -2,12 +2,10 @@ import { Users } from "lucide-react";
 import Container from "@/components/ui/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
 import CommitteeGrid from "@/components/sections/CommitteeGrid";
-import { committeeNote, futureCommittees, organizingChair, organizingCommittee } from "@/data/committee";
+import { committeeNote, organizingChair, organizingCommittee } from "@/data/committee";
 import { initials } from "@/lib/initials";
 
 export default function Committee() {
-  const published = futureCommittees.filter((group) => group.members.length > 0);
-
   return (
     <section id="committee" aria-labelledby="committee-title" className="relative bg-paper py-24 sm:py-28 lg:py-36">
       <Container>
@@ -46,20 +44,6 @@ export default function Committee() {
             <CommitteeGrid members={organizingCommittee} />
           </div>
         </div>
-
-        {published.map((group) => (
-          <div key={group.id} className="mt-16">
-            <h3 className="text-xl font-semibold tracking-tight text-atlas-950">{group.title}</h3>
-            <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {group.members.map((member) => (
-                <li key={member.name} className="rounded-2xl bg-white p-5 ring-1 ring-atlas-100">
-                  <p className="font-semibold text-atlas-950">{member.name}</p>
-                  {member.affiliation && <p className="mt-1 text-sm text-atlas-950/60">{member.affiliation}</p>}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
 
         <p data-reveal role="note" className="mt-10 max-w-2xl text-sm leading-relaxed text-atlas-950/60">
           {committeeNote}

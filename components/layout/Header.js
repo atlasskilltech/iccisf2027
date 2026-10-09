@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LazyMotion, MotionConfig, domAnimation, m } from "motion/react";
 import { Menu, X } from "lucide-react";
@@ -8,7 +10,20 @@ import { navigation, site } from "@/data/site";
 import { logos } from "@/data/images";
 import { lockScroll, scrollToHash } from "@/lib/scroll";
 
+/** Page links use client navigation; `#hash` links stay plain anchors for MotionRuntime's smooth scroll. */
+function NavLink({ href, ...props }) {
+  return href.startsWith("/") ? <Link href={href} {...props} /> : <a href={href} {...props} />;
+}
+
 export default function Header() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  // Homepage sections are reached from other pages via "/#section".
+  const resolve = (href) => (href.startsWith("#") && !isHome ? `/${href}` : href);
+  const currentFor = (item) => {
+    if (item.href.startsWith("/") && pathname.startsWith(item.href)) return "page";
+    return active === (item.section || item.href) ? "location" : undefined;
+  };
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState(null);
   const [open, setOpen] = useState(false);
@@ -25,7 +40,8 @@ export default function Header() {
 
   // Scroll-spy: highlight the section crossing the middle of the viewport.
   useEffect(() => {
-    const sections = ["#top", ...navigation.map((item) => item.href)]
+    const sections = ["#top", ...navigation.map((item) => item.section || item.href)]
+      .filter((href) => href.startsWith("#"))
       .map((href) => document.querySelector(href))
       .filter(Boolean);
     const observer = new IntersectionObserver(
@@ -76,8 +92,10 @@ export default function Header() {
   }, [open]);
 
   const navigateFromMenu = (event, href) => {
-    event.preventDefault();
     setOpen(false);
+    // Page links (and sections of another page) navigate normally.
+    if (!href.startsWith("#") || !isHome) return;
+    event.preventDefault();
     // Wait for the scroll lock to release before scrolling.
     requestAnimationFrame(() => requestAnimationFrame(() => scrollToHash(href)));
   };
@@ -93,8 +111,8 @@ export default function Header() {
           }`}
         >
           <div className="mx-auto flex h-18 w-full max-w-[90rem] items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
-            <a
-              href="#top"
+            <NavLink
+              href={isHome ? "#top" : "/"}
               className="flex min-w-0 shrink-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-atlas-700 sm:gap-4"
             >
               <Image
@@ -107,7 +125,7 @@ export default function Header() {
                 sizes="96px"
               />
               <span aria-hidden="true" className="h-8 w-px bg-atlas-100" />
-              <span className="sr-only">Back to top: </span>
+              <span className="sr-only">{isHome ? "Back to top: " : "Home: "}</span>
               <span className="flex flex-col leading-none">
                 <span className="text-[0.95rem] font-semibold tracking-[-0.01em] text-atlas-900 sm:text-base">
                   ICCISF<span className="text-aqua-700">2027</span>
@@ -116,17 +134,18 @@ export default function Header() {
                   {site.dates.short} · {site.venue.city}
                 </span>
               </span>
-            </a>
+            </NavLink>
 
             <nav aria-label="Primary" className="hidden xl:block">
               <ul className="flex items-center gap-1">
                 {navigation.map((item) => {
-                  const isActive = active === item.href;
+                  const current = currentFor(item);
+                  const isActive = Boolean(current);
                   return (
                     <li key={item.href}>
-                      <a
-                        href={item.href}
-                        aria-current={isActive ? "location" : undefined}
+                      <NavLink
+                        href={resolve(item.href)}
+                        aria-current={current}
                         className={`group relative inline-flex h-10 items-center rounded-full px-3.5 text-sm font-medium transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-atlas-700 ${
                           isActive ? "text-atlas-900" : "text-atlas-900/65 hover:text-atlas-900"
                         }`}
@@ -138,7 +157,7 @@ export default function Header() {
                             isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                           }`}
                         />
-                      </a>
+                      </NavLink>
                     </li>
                   );
                 })}
@@ -146,12 +165,12 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center gap-2">
-              <a
-                href="#call-for-papers"
+              <NavLink
+                href={resolve("#call-for-papers")}
                 className="hidden h-10 items-center rounded-full bg-atlas-700 px-5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-atlas-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-atlas-700 md:inline-flex"
               >
                 Call for Papers
-              </a>
+              </NavLink>
               <button
                 ref={toggleRef}
                 type="button"
@@ -189,17 +208,17 @@ export default function Header() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.04 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                       >
-                        <a
-                          href={item.href}
+                        <NavLink
+                          href={resolve(item.href)}
                           onClick={(event) => navigateFromMenu(event, item.href)}
-                          aria-current={active === item.href ? "location" : undefined}
-                          className="flex min-h-14 items-center justify-between gap-4 py-3 text-2xl font-semibold tracking-[-0.02em] text-atlas-950 focus-visible:outline-2 focus-visible:outline-atlas-700 aria-[current=location]:text-aqua-700"
+                          aria-current={currentFor(item)}
+                          className="flex min-h-14 items-center justify-between gap-4 py-3 text-2xl font-semibold tracking-[-0.02em] text-atlas-950 focus-visible:outline-2 focus-visible:outline-atlas-700 aria-[current=location]:text-aqua-700 aria-[current=page]:text-aqua-700"
                         >
                           {item.label}
                           <span aria-hidden="true" className="font-mono text-xs font-normal text-atlas-400">
                             {String(i + 1).padStart(2, "0")}
                           </span>
-                        </a>
+                        </NavLink>
                       </m.li>
                     ))}
                   </ul>

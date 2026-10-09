@@ -2,10 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { LazyMotion, MotionConfig, domAnimation, m } from "motion/react";
-import { initials } from "@/lib/initials";
+import MemberRow from "@/components/sections/MemberRow";
+import { memberHref } from "@/data/committee";
 
-/** Department filter + member list. The full list is server-rendered ("All"). */
-export default function CommitteeGrid({ members }) {
+/**
+ * Department filter + member list. The full list is server-rendered ("All").
+ * `linked` turns each row into a link to the member's profile page.
+ */
+export default function CommitteeGrid({ members, linked = false }) {
   const [filter, setFilter] = useState("All");
   // Only animate after the first interaction so server HTML is never hidden.
   const [interacted, setInteracted] = useState(false);
@@ -57,20 +61,7 @@ export default function CommitteeGrid({ members }) {
           className="mt-6 grid gap-x-6 sm:grid-cols-2"
         >
           {visible.map((member) => (
-            <li key={member.name} className="group flex items-center gap-4 border-t border-atlas-100 py-4">
-              <span
-                aria-hidden="true"
-                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-atlas-50 font-mono text-xs font-semibold tracking-wider text-atlas-700 ring-1 ring-atlas-100 transition-colors duration-300 group-hover:bg-aqua-500 group-hover:text-atlas-950 group-hover:ring-aqua-500"
-              >
-                {initials(member.name)}
-              </span>
-              <span className="min-w-0">
-                <span className="block font-semibold tracking-tight text-atlas-950">{member.name}</span>
-                <span className="block text-sm text-atlas-950/60">
-                  {member.designation} · {member.department}
-                </span>
-              </span>
-            </li>
+            <MemberRow key={member.name} member={member} href={linked ? memberHref(member) : undefined} />
           ))}
         </m.ul>
       </MotionConfig>
